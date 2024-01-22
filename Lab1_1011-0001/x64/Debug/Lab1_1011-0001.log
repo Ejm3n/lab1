@@ -1,2 +1,8 @@
 ﻿  Lab1_1011-0001.cpp
-  Lab1_1011-0001.vcxproj -> C:\Users\aboba\source\repos\Lab1_1011-0001\x64\Debug\Lab1_1011-0001.exe
+F:\vsproj\lab1git\lab1\Lab1_1011-0001\Lab1_1011-0001.cpp(18,1): warning C4099: Achievement: имя типа, ранее отображенное с помощью "struct", теперь отображено с помощью "class"
+F:\vsproj\lab1git\lab1\Lab1_1011-0001\Lab1_1011-0001.cpp(17,7): message : см. объявление "Achievement"
+F:\vsproj\lab1git\lab1\Lab1_1011-0001\Lab1_1011-0001.cpp(25,1): warning C4099: Game: имя типа, ранее отображенное с помощью "struct", теперь отображено с помощью "class"
+F:\vsproj\lab1git\lab1\Lab1_1011-0001\Lab1_1011-0001.cpp(24,7): message : см. объявление "Game"
+F:\vsproj\lab1git\lab1\Lab1_1011-0001\Lab1_1011-0001.cpp(33,1): warning C4099: Platform: имя типа, ранее отображенное с помощью "struct", теперь отображено с помощью "class"
+F:\vsproj\lab1git\lab1\Lab1_1011-0001\Lab1_1011-0001.cpp(32,7): message : см. объявление "Platform"
+  Lab1_1011-0001.vcxproj -> F:\vsproj\lab1git\lab1\x64\Debug\Lab1_1011-0001.exe

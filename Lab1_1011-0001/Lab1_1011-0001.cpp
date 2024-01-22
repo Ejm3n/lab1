@@ -1,22 +1,37 @@
 ﻿#include <iostream>
 #include <string>
+#include <list>
 using namespace std;
-struct Achievement
+struct Achievement;
+struct Game;
+struct Platform;
+
+Achievement InitializeAchievement(string title, string description, int scoreVal);
+Game InitializeGame(string name, string publisher, string developer, Achievement* achievements);
+Platform Initialize();
+void ShowPlatform(Platform platform);
+void ShowGame(Game game);
+void ShowAchivement(Achievement achivement);
+void ShowAll(list<Platform> platforms);
+
+class Achievement
 {
+public:
     string Title;
     string Description;
     int ScoreValue;
 };
-struct Game
+class Game
 {
+public:
     string Name;
     string Publisher;
     string Developer;
     Achievement* Achievements;
 };
-struct Platform
+class Platform
 {
-
+public:
     string Name;
     string Manufacturer;
     Game* Games;
@@ -24,17 +39,43 @@ struct Platform
 
 int main()
 {
-  Platform* platforms;
-  
+    std::list<Platform> platforms;
+    platforms.push_back(Initialize());
+    ShowAll(platforms);
 }
-void ShowAll()
+void ShowAll(list<Platform> platforms)
 {
-    
+    for (const auto& platform : platforms) {
+        ShowPlatform(platform);
+    }
 }
 
-Platform CreateNewPlatform()
+void ShowPlatform(Platform platform)
 {
+    cout << "Name: " << platform.Name << endl;
+    cout << "Manufacturer: " << platform.Manufacturer << endl;
+    for (int i = 1; i < sizeof(platform.Games); i++)
+    {
+        ShowGame(platform.Games[i]);
+    }
+}
 
+void ShowGame(Game game)
+{
+    cout << "Name: " << game.Name << endl;
+    cout << "Publisher: " << game.Publisher << endl;
+    cout << "Developer: " << game.Developer << endl;
+    for (int i = 1; i<sizeof( game.Achievements);i++)
+    {
+        ShowAchivement(game.Achievements[i]);
+    }
+}
+
+void ShowAchivement(Achievement achivement)
+{
+    cout << "Title: " << achivement.Title << endl;
+    cout << "Description: " << achivement.Description << endl;
+    cout << "ScoreValue: " << achivement.ScoreValue << endl;
 }
 
 
