@@ -1,167 +1,220 @@
 ﻿#include <iostream>
 #include <string>
-#include <list>
+#include <vector>
 using namespace std;
 struct Achievement;
 struct Game;
 struct Platform;
 
-Achievement InitializeAchievement(string title, string description, int scoreVal);
-Game InitializeGame(string name, string publisher, string developer, Achievement* achievements);
-Platform Initialize();
-void ShowPlatform(Platform platform);
-void ShowGame(Game game);
-void ShowAchivement(Achievement achivement);
-void ShowAll(list<Platform> platforms);
 
-class Achievement
-{
+class Achievement {
+    std::string title;
+    std::string description;
+    int scoreValue;
+
 public:
-    string Title;
-    string Description;
-    int ScoreValue;
-};
-class Game
-{
-public:
-    string Name;
-    string Publisher;
-    string Developer;
-    Achievement* Achievements;
-};
-class Platform
-{
-public:
-    string Name;
-    string Manufacturer;
-    Game* Games;
+    Achievement(const std::string& t, const std::string& d, int sv)
+        : title(t), description(d), scoreValue(sv) {}
+
+    // Accessors (getters)
+    std::string getTitle() const { return title; }
+    std::string getDescription() const { return description; }
+    int getScoreValue() const { return scoreValue; }
+
+    // Mutators (setters)
+    void setTitle(const std::string& t) { title = t; }
+    void setDescription(const std::string& d) { description = d; }
+    void setScoreValue(int sv) { scoreValue = sv; }
 };
 
-int main()
-{
-    std::list<Platform> platforms;
-    platforms.push_back(Initialize());
-    ShowAll(platforms);
+class Game {
+    std::string name;
+    std::string publisher;
+    std::string developer;
+    std::vector<Achievement> achievements;
+
+public:
+    Game(const std::string& n, const std::string& p, const std::string& d)
+        : name(n), publisher(p), developer(d) {}
+
+    // Accessors
+    std::string getName() const { return name; }
+    std::string getPublisher() const { return publisher; }
+    std::string getDeveloper() const { return developer; }
+    const std::vector<Achievement>& getAchievements() const { return achievements; }
+
+    // Mutators
+    void setName(const std::string& n) { name = n; }
+    void setPublisher(const std::string& p) { publisher = p; }
+    void setDeveloper(const std::string& d) { developer = d; }
+    void addAchievement(const Achievement& a) { achievements.push_back(a); }
+};
+
+class Platform {
+    std::string name;
+    std::string manufacturer;
+    std::vector<Game> games;
+
+public:
+    Platform(const std::string& n, const std::string& m)
+        : name(n), manufacturer(m) {}
+
+    // Accessors
+    std::string getName() const { return name; }
+    std::string getManufacturer() const { return manufacturer; }
+    const std::vector<Game>& getGames() const { return games; }
+    std::vector<Game>& getEditableGames() { return games; }
+    // Mutators
+    void setName(const std::string& n) { name = n; }
+    void setManufacturer(const std::string& m) { manufacturer = m; }
+    void addGame(const Game& g) { games.push_back(g); }
+};
+void displayMainMenu() {
+    std::cout << "1. Add Achievement to Game\n";
+    std::cout << "2. Display All Games\n";
+    std::cout << "3. Exit\n";
 }
-void ShowAll(list<Platform> platforms)
-{
+void addGameToPlatform(Platform& platform);
+void addAchievementToGame(Game& game);
+void displayPlatforms(const std::vector<Platform>& platforms);
+void selectPlatform(std::vector<Platform>& platforms);
+void selectGame(std::vector<Game>& games);
+void createPlatform(vector<Platform>& platforms);
+
+int main() {
+    std::vector<Platform> platforms;
+
+    bool running = true;
+    int choice;
+
+    while (running) {
+        std::cout << "1. Create Platform\n";
+        std::cout << "2. Add Game to Platform\n";
+        std::cout << "3. Add Achievement to Game\n";
+        std::cout << "4. Display Platforms and Games\n";
+        std::cout << "5. Exit\n";
+        std::cout << "Enter choice: ";
+        std::cin >> choice;
+
+        switch (choice) {
+        case 1: {
+            createPlatform(platforms);
+            break;
+        }
+        case 2:
+            selectPlatform(platforms);
+            break;
+        case 3:
+            if (platforms.empty()) {
+                std::cout << "No platforms available. Please create a platform first.\n";
+                break;
+            }
+            for (auto& platform : platforms) {
+                // Here you call the non-const version of getGames
+                selectGame(platform.getEditableGames());
+            }
+            break;
+        case 4:
+            displayPlatforms(platforms);
+            break;
+        case 5:
+            running = false;
+            break;
+        default:
+            std::cout << "Invalid option. Please try again.\n";
+        }
+    }
+
+    return 0;
+}
+void createPlatform(vector<Platform>& platforms) {
+    string name, manufacturer;
+    cout << "Enter platform name: ";
+    cin.ignore();
+    getline(cin, name);
+    cout << "Enter manufacturer: ";
+    getline(cin, manufacturer);
+
+    Platform newPlatform(name, manufacturer);
+    for (int i = 0; i < 5; ++i) {
+        addGameToPlatform(newPlatform);
+    }
+    platforms.push_back(newPlatform);
+}
+
+void addGameToPlatform(Platform& platform) {
+    string name, publisher, developer;
+    cout << "Enter game name: ";
+    getline(cin, name);
+    cout << "Enter publisher: ";
+    getline(cin, publisher);
+    cout << "Enter developer: ";
+    getline(cin, developer);
+
+    Game newGame(name, publisher, developer);
+    for (int i = 0; i < 5; ++i) {
+        addAchievementToGame(newGame);
+    }
+    platform.addGame(newGame);
+}
+
+void addAchievementToGame(Game& game) {
+    string title, description;
+    int scoreValue;
+
+    cout << "Enter achievement title: ";
+    getline(cin, title);
+
+    cout << "Enter achievement description: ";
+    getline(cin, description);
+
+    cout << "Enter achievement score value: ";
+    cin >> scoreValue;
+    cin.ignore();
+
+    Achievement newAchievement(title, description, scoreValue);
+    game.addAchievement(newAchievement);
+}
+
+void displayPlatforms(const std::vector<Platform>& platforms) {
     for (const auto& platform : platforms) {
-        ShowPlatform(platform);
+        std::cout << "Platform: " << platform.getName() << ", Manufactured by: " << platform.getManufacturer() << "\n";
+        for (const auto& game : platform.getGames()) {
+            std::cout << "  Game: " << game.getName() << ", Published by: " << game.getPublisher() << ", Developed by: " << game.getDeveloper() << "\n";
+            for (const auto& achievement : game.getAchievements()) {
+                std::cout << "    Achievement: " << achievement.getTitle() << " - " << achievement.getDescription() << ", Score: " << achievement.getScoreValue() << "\n";
+            }
+        }
     }
 }
 
-void ShowPlatform(Platform platform)
-{
-    cout << "Name: " << platform.Name << endl;
-    cout << "Manufacturer: " << platform.Manufacturer << endl;
-    for (int i = 1; i < sizeof(platform.Games); i++)
-    {
-        ShowGame(platform.Games[i]);
+void selectPlatform(std::vector<Platform>& platforms) {
+    std::cout << "Select a platform to add a game to:\n";
+    for (int i = 0; i < platforms.size(); ++i) {
+        std::cout << i + 1 << ". " << platforms[i].getName() << "\n";
+    }
+    int choice;
+    std::cin >> choice;
+    if (choice < 1 || choice > platforms.size()) {
+        std::cout << "Invalid selection.\n";
+    }
+    else {
+        addGameToPlatform(platforms[choice - 1]);
     }
 }
 
-void ShowGame(Game game)
-{
-    cout << "Name: " << game.Name << endl;
-    cout << "Publisher: " << game.Publisher << endl;
-    cout << "Developer: " << game.Developer << endl;
-    for (int i = 1; i<sizeof( game.Achievements);i++)
-    {
-        ShowAchivement(game.Achievements[i]);
+void selectGame(std::vector<Game>& games) {
+    std::cout << "Select a game to add an achievement to:\n";
+    for (int i = 0; i < games.size(); ++i) {
+        std::cout << i + 1 << ". " << games[i].getName() << "\n";
+    }
+    int choice;
+    std::cin >> choice;
+    if (choice < 1 || choice > games.size()) {
+        std::cout << "Invalid selection.\n";
+    }
+    else {
+        addAchievementToGame(games[choice - 1]);
     }
 }
 
-void ShowAchivement(Achievement achivement)
-{
-    cout << "Title: " << achivement.Title << endl;
-    cout << "Description: " << achivement.Description << endl;
-    cout << "ScoreValue: " << achivement.ScoreValue << endl;
-}
-
-
-Platform Initialize()
-{
-    Platform platform;
-    platform.Name = "GoodGames";
-    platform.Manufacturer = "Evil megacorp";
-    platform.Games = new Game[5];
-
-    Achievement cyberNexusAchievements[5] = {
-        InitializeAchievement("Neon Warrior", "Complete the first chapter.", 300),
-        InitializeAchievement("Hack Master", "Hack into 50 different systems.", 3500),
-        InitializeAchievement("Shadow Operative", "Complete a mission without being detected.", 2200),
-        InitializeAchievement("Rebel Leader", "Rally the resistance", 666),
-        InitializeAchievement("Cybernetic Savior", "Defeat the final boss.", 10000)
-    };
-
-    Achievement lostKingdomsAchievements[5] = {
-        InitializeAchievement("First Light", "Discover the lost city of Eloria.", 500),
-        InitializeAchievement("Ancient Scholar", "Collect 100 ancient scrolls.", 1000),
-        InitializeAchievement("Dragon Tamer", "Befriend a legendary dragon.", 1500),
-        InitializeAchievement("Crown Restorer", "Reclaim the lost crown of Eloria.", 2000),
-        InitializeAchievement("Master of Elements", "Master all magical elements.", 2500)
-    };
-
-
-    Achievement galacticOdysseyAchievements[5] = {
-        InitializeAchievement("Star Explorer", "Visit 10 different planets.", 300),
-        InitializeAchievement("Alien Diplomat", "Establish peace with an alien race.", 600),
-        InitializeAchievement("Void Voyager", "Survive a black hole encounter.", 900),
-        InitializeAchievement("Galactic Hero", "Save a planet from destruction.", 1200),
-        InitializeAchievement("Universe Discoverer", "Chart an unexplored galaxy.", 1500)
-    };
-
-
-    Achievement timeRiftAchievements[5] = {
-        InitializeAchievement("Temporal Initiate", "Complete your first time jump.", 350),
-        InitializeAchievement("Paradox Solver", "Resolve a time paradox.", 700),
-        InitializeAchievement("Era Explorer", "Visit five different historical periods.", 1050),
-        InitializeAchievement("Guardian of Time", "Thwart a time manipulation attempt.", 1400),
-        InitializeAchievement("Chrono Master", "Master all time travel mechanics.", 1750)
-    };
-
-
-    Achievement urbanLegendsAchievements[5] = {
-        InitializeAchievement("Ghoul Hunter", "Defeat your first supernatural entity.", 400),
-        InitializeAchievement("Myth Buster", "Disprove a false legend.", 800),
-        InitializeAchievement("Occult Scholar", "Collect 50 artifacts of lore.", 1200),
-        InitializeAchievement("Shadow Operative", "Solve a high-profile paranormal case.", 1600),
-        InitializeAchievement("Legend Master", "Discover the truth behind the ultimate urban legend.", 2000)
-    };
-
-
-    platform.Games[0] = InitializeGame("Cyber Nexus", "Nova Interactive", "Quantum Studios", cyberNexusAchievements);
-    platform.Games[1] = InitializeGame("Lost Kingdoms of Eloria", "Mythos Games", "Elder Realms", lostKingdomsAchievements);
-    platform.Games[2] = InitializeGame("Galactic Odyssey", "Starbound Entertainment", "Nebula Creations", galacticOdysseyAchievements);
-    platform.Games[3] = InitializeGame("Time Rift", "Epoch Entertainment", "ChronoCraft Studios", timeRiftAchievements);
-    platform.Games[4] = InitializeGame("Urban Legends", "Dark City Games", "Shadow Interactive", urbanLegendsAchievements);
-
-    return platform;
-}
-
-Platform InitializePlatform(string name, string manufacturer, Game* games)
-{
-    Platform platform;
-    platform.Name = name;
-    platform.Manufacturer = manufacturer;
-    platform.Games = games;
-    return platform;
-}
-
-Game InitializeGame(string name, string publisher, string developer, Achievement* achivements)
-{
-    Game game;
-    game.Name = name;
-    game.Publisher = publisher;
-    game.Developer = developer;
-    game.Achievements = achivements;
-    return game;
-}
-Achievement InitializeAchievement(string title, string description, int scoreVal)
-{
-    Achievement achivement;
-    achivement.Title = title;
-    achivement.Description = description;
-    achivement.ScoreValue = scoreVal;
-    return achivement;
-}
